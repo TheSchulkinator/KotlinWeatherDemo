@@ -1,7 +1,8 @@
-package theschulk.com.kotlinweatherdemo
+package theschulk.com.kotlinweatherdemo.UI.CurrentWeather
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import theschulk.com.kotlinweatherdemo.R
 
 class CurrentWeatherActivity : AppCompatActivity() {
 
