@@ -20,6 +20,6 @@ class CurrentWeatherDataHandler {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        currentWeatherHandler = CurrentWeatherHandler(retrofit.create(CurrentWeatherApi::class.java))
+        currentWeatherHandler = CurrentWeatherHandler(retrofit.create(CurrentWeatherService::class.java))
     }
 }
