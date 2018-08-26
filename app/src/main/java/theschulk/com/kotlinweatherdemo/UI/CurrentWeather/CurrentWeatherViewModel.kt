@@ -1,13 +1,13 @@
 package theschulk.com.kotlinweatherdemo.UI.CurrentWeather
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
-import theschulk.com.kotlinweatherdemo.Data.Retrofit.CurrentWeather.CurrentWeatherDataHandler
 import theschulk.com.kotlinweatherdemo.Data.Retrofit.CurrentWeather.CurrentWeatherModel
-import theschulk.com.kotlinweatherdemo.Data.Retrofit.RetrofitLiveData
+import theschulk.com.kotlinweatherdemo.Data.Room.CurrentWeatherEntity
+import theschulk.com.kotlinweatherdemo.Data.WeatherRepository
 
-class CurrentWeatherViewModel: ViewModel() {
+class CurrentWeatherViewModel(private val repo: WeatherRepository?): ViewModel() {
 
-    val liveData : RetrofitLiveData<CurrentWeatherModel.Result> =
-            CurrentWeatherDataHandler.INSTANCE.currentWeatherHandler.getWeather()
+    val weather: LiveData<CurrentWeatherEntity> = repo!!.getWeather()
 
 }

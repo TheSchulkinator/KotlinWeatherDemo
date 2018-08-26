@@ -12,13 +12,13 @@ import android.arch.persistence.room.PrimaryKey
 class CurrentWeatherEntity(
         @PrimaryKey(autoGenerate = true) var id: Long?,
         @ColumnInfo(name="date") var date : Long,
-        @ColumnInfo(name = "temp") var temp: Int,
-        @ColumnInfo(name="min_temp") var minTemp: Int,
-        @ColumnInfo(name="max_temp") var maxTemp: Int,
+        @ColumnInfo(name = "temp") var temp: Double,
+        @ColumnInfo(name="min_temp") var minTemp: Double,
+        @ColumnInfo(name="max_temp") var maxTemp: Double,
         @ColumnInfo(name="description") var description: String,
         @ColumnInfo(name="icon") var icon: String?,
         @ColumnInfo(name="city") var city: String
 ) {
-    constructor():this(null, 0, 0,0,0,"",
+    constructor():this(null, 0, 0.0,0.0,0.0,"",
             "", "")
 }
