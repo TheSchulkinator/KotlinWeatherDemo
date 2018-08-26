@@ -6,7 +6,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import theschulk.com.kotlinweatherdemo.Data.Retrofit.CurrentWeather.CurrentWeatherDataHandler
 import theschulk.com.kotlinweatherdemo.Data.Retrofit.CurrentWeather.CurrentWeatherModel
-import theschulk.com.kotlinweatherdemo.Data.Retrofit.RetrofitLiveData
 import theschulk.com.kotlinweatherdemo.Data.Room.CurrentWeatherDAO
 import theschulk.com.kotlinweatherdemo.Data.Room.CurrentWeatherEntity
 import theschulk.com.kotlinweatherdemo.Data.Room.DbWorkerThread
@@ -17,10 +16,9 @@ import theschulk.com.kotlinweatherdemo.Data.Room.DbWorkerThread
  */
 class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
 
-    private lateinit var mDbWorkerThread: DbWorkerThread
+    private val mDbWorkerThread: DbWorkerThread = DbWorkerThread("dbWorkerThread")
 
     fun getWeather(): LiveData<CurrentWeatherEntity>{
-        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
         mDbWorkerThread.start()
 
         var needNetwork : Boolean = networkNeeded()
@@ -86,6 +84,7 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
         var dbWeather : CurrentWeatherEntity? = null
         val task = Runnable { dbWeather = mWeatherDAO.getAll() }
         mDbWorkerThread.postTask(task)
+
 
         val dbSavedUnixDate = dbWeather!!.date
         val currentUnixDate = System.currentTimeMillis() / 1000L
