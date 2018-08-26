@@ -27,14 +27,26 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
 
         if(!needNetwork){
             retrofitToRoom()
+        } else if (checkAgeOfData()){
+            //Delete data if the data is older than 30 minutes
+            val task = Runnable { mWeatherDAO.deleteAll() }
+            mDbWorkerThread.postTask(task)
+
+            //Add new data to db
+            retrofitToRoom()
         }
-        return mWeatherDAO.getAll()
+        return mWeatherDAO.getAllLiveData()
     }
 
     private fun networkNeeded(): Boolean{
-        mWeatherDAO.getAll() ?: return true
-
-        return false
+        var weatherData : CurrentWeatherEntity? = null
+        val task = Runnable { weatherData = mWeatherDAO.getAll() }
+        mDbWorkerThread.postTask(task)
+        if(weatherData != null) {
+            return true
+        }else{
+            return false
+        }
     }
 
     private fun retrofitToRoom(){
@@ -51,7 +63,7 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
                     override fun onResponse(call: Call<CurrentWeatherModel.Result>?, response: Response<CurrentWeatherModel.Result>?) {
                         networkWeather = response!!.body()
                         currentWeatherEntity.city = networkWeather!!.name
-                        currentWeatherEntity.date = networkWeather!!.date
+                        currentWeatherEntity.date = networkWeather!!.dt
                         currentWeatherEntity.description = networkWeather!!.weather[0].description
                         currentWeatherEntity.icon = networkWeather!!.weather[0].icon
                         currentWeatherEntity.maxTemp = networkWeather!!.main.temp_max
@@ -64,6 +76,24 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
                 }
         )
 
+    }
+
+    /**
+     * Fun to check to see how old the data is
+     */
+    fun checkAgeOfData(): Boolean{
+
+        var dbWeather : CurrentWeatherEntity? = null
+        val task = Runnable { dbWeather = mWeatherDAO.getAll() }
+        mDbWorkerThread.postTask(task)
+
+        val dbSavedUnixDate = dbWeather!!.date
+        val currentUnixDate = System.currentTimeMillis() / 1000L
+
+        //see if the difference of the two dates is greater than 30 minutes
+        val differenceUnixDate = currentUnixDate - dbSavedUnixDate
+
+        return differenceUnixDate >=  1800
     }
 
     companion object {

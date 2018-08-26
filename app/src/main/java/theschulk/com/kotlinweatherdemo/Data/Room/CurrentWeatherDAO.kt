@@ -12,7 +12,10 @@ import android.arch.persistence.room.Query
 @Dao
 interface CurrentWeatherDAO {
     @Query("SELECT * from currentWeatherTable")
-    fun getAll(): LiveData<CurrentWeatherEntity>
+    fun getAllLiveData(): LiveData<CurrentWeatherEntity>
+
+    @Query("SELECT * from currentWeatherTable")
+    fun getAll(): CurrentWeatherEntity
 
     @Insert(onConflict = REPLACE)
     fun insert(weatherData: CurrentWeatherEntity)
