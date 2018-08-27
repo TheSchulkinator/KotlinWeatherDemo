@@ -14,13 +14,10 @@ import theschulk.com.kotlinweatherdemo.Data.Room.DbWorkerThread
  * Repo class to decide if data needs to be pulled from the network
  * or if the data in the db is recent enough
  */
-class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
-
-    private val mDbWorkerThread: DbWorkerThread = DbWorkerThread("dbWorkerThread")
+class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO,
+                        private  val mDbWorkerThread: DbWorkerThread) {
 
     fun getWeather(): LiveData<CurrentWeatherEntity>{
-        mDbWorkerThread.start()
-
         var needNetwork : Boolean = networkNeeded()
 
         if(!needNetwork){
@@ -63,7 +60,7 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
                         currentWeatherEntity.city = networkWeather!!.name
                         currentWeatherEntity.date = networkWeather!!.dt
                         currentWeatherEntity.description = networkWeather!!.weather[0].description
-                        currentWeatherEntity.icon = networkWeather!!.weather[0].icon
+                        currentWeatherEntity.icon = "ic_" + networkWeather!!.weather[0].icon
                         currentWeatherEntity.maxTemp = networkWeather!!.main.temp_max
                         currentWeatherEntity.minTemp = networkWeather!!.main.temp_min
                         currentWeatherEntity.temp = networkWeather!!.main.temp
@@ -100,10 +97,11 @@ class WeatherRepository(private val mWeatherDAO: CurrentWeatherDAO) {
         private val LOCK = Any()
         private var repoInstance: WeatherRepository? = null
         @Synchronized
-        fun getInstance(weatherDAO: CurrentWeatherDAO): WeatherRepository? {
+        fun getInstance(weatherDAO: CurrentWeatherDAO,
+                        DbWorkerThread: DbWorkerThread): WeatherRepository? {
             synchronized(LOCK) {
                 if (repoInstance == null) {
-                    repoInstance = WeatherRepository(weatherDAO)
+                    repoInstance = WeatherRepository(weatherDAO, DbWorkerThread)
                 }
             }
             return repoInstance

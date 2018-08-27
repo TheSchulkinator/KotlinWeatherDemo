@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">KotlinWeatherDemo</string>
 
+    //Current Weather Strings
+    <string name="temp_suffix">°F</string>
+    <string name="high">High: </string>
+    <string name="low">Low: </string>
+
 </resources>

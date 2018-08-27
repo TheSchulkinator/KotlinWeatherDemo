@@ -9,7 +9,7 @@ import android.os.HandlerThread
  */
 class DbWorkerThread(threadName: String) : HandlerThread(threadName) {
 
-    private var workerHandler: Handler? = null
+    private lateinit var workerHandler: Handler
 
     override fun onLooperPrepared() {
         super.onLooperPrepared()
